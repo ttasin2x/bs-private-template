@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BD Scouts Pro Watermark Studio</title>
+    <!-- JSZip Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            var(--primary): #008C44; 
             --primary: #008C44;
             --primary-hover: #006B33;
             --bg-gradient: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
@@ -78,14 +78,14 @@
             position: relative; overflow: hidden;
             border-radius: 12px; border: 3px solid #a5d6a7;
             cursor: grab; background: #ddd;
-            touch-action: none; /* Prevents page scroll on mobile swipe */
+            touch-action: none;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         .crop-container:active { cursor: grabbing; border-color: var(--primary); }
         
         .crop-img {
             position: absolute; transform-origin: top left;
-            pointer-events: none; /* Let container catch the mouse events */
+            pointer-events: none;
         }
 
         .crop-hint {
@@ -133,7 +133,8 @@
             <div class="card">
                 <h3>🏕️ Scout Template</h3>
                 <div class="template-preview">
-                    <img id="wmPreview" src="watermark.png" onerror="this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='">
+                    <!-- Ekhane 'photos/watermark.png' link kora hoyeche -->
+                    <img id="wmPreview" src="photos/watermark.png" onerror="this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='">
                 </div>
                 <label class="custom-btn">
                     Upload Custom Frame
@@ -183,13 +184,13 @@
         const resultSection = document.getElementById('resultSection');
         const finalGallery = document.getElementById('finalGallery');
 
-        let cropItems = []; // Stores image data and crop offsets
+        let cropItems = []; 
         let processedImagesData = [];
-        const frameSize = 140; // UI preview box size
+        const frameSize = 140; 
 
-        // Setup Watermark
+        // Default Watermark location updated to 'photos/watermark.png'
         const watermarkImg = new Image();
-        watermarkImg.src = 'watermark.png';
+        watermarkImg.src = 'photos/watermark.png';
         const savedWM = localStorage.getItem('scoutWatermark');
         if (savedWM) { wmPreview.src = savedWM; watermarkImg.src = savedWM; }
 
@@ -205,11 +206,9 @@
             reader.readAsDataURL(file);
         });
 
-        // Interactive Drag State Variables
         let activeDrag = null;
         let startX, startY, initialOffsetX, initialOffsetY;
 
-        // Global Mouse/Touch events for smooth dragging outside the box
         const onMove = (e) => {
             if (!activeDrag) return;
             e.preventDefault();
@@ -222,7 +221,6 @@
             let newX = initialOffsetX + dx;
             let newY = initialOffsetY + dy;
             
-            // Clamp (Boundary limits so image doesn't go out of frame)
             newX = Math.min(0, Math.max(newX, frameSize - activeDrag.renderW));
             newY = Math.min(0, Math.max(newY, frameSize - activeDrag.renderH));
             
@@ -254,16 +252,13 @@
                 reader.onload = (event) => {
                     const img = new Image();
                     img.onload = () => {
-                        // Calculate sizes to cover the frame
                         const scale = Math.max(frameSize / img.width, frameSize / img.height);
                         const renderW = img.width * scale;
                         const renderH = img.height * scale;
                         
-                        // Center by default
                         let currentX = (frameSize - renderW) / 2;
                         let currentY = (frameSize - renderH) / 2;
 
-                        // Create UI Elements
                         const container = document.createElement('div');
                         container.className = 'crop-container';
                         
@@ -283,20 +278,12 @@
                         container.appendChild(hint);
                         uploadPreview.appendChild(container);
 
-                        // Save data for processing and dragging
                         const itemData = {
-                            file: file,
-                            origImg: img,
-                            imgEl: imgEl,
-                            scale: scale,
-                            renderW: renderW,
-                            renderH: renderH,
-                            offsetX: currentX,
-                            offsetY: currentY
+                            file: file, origImg: img, imgEl: imgEl, scale: scale,
+                            renderW: renderW, renderH: renderH, offsetX: currentX, offsetY: currentY
                         };
                         cropItems.push(itemData);
 
-                        // Attach drag trigger to container
                         const startDrag = (e) => {
                             activeDrag = itemData;
                             startX = e.type.includes('mouse') ? e.pageX : e.touches[0].pageX;
@@ -314,7 +301,6 @@
             });
         }
 
-        // Processing based on manual adjustment
         processBtn.addEventListener('click', async () => {
             if (cropItems.length === 0) return;
 
@@ -331,10 +317,7 @@
                 const item = cropItems[i];
                 const img = item.origImg;
                 
-                // Set output resolution (Shortest side of original image)
                 const outputSize = Math.min(img.width, img.height);
-                
-                // Calculate original coordinates from preview offsets
                 const sourceX = Math.abs(item.offsetX) / item.scale;
                 const sourceY = Math.abs(item.offsetY) / item.scale;
 
@@ -343,10 +326,8 @@
                 canvas.height = outputSize;
                 const ctx = canvas.getContext('2d');
 
-                // Draw cropped area
                 ctx.drawImage(img, sourceX, sourceY, outputSize, outputSize, 0, 0, outputSize, outputSize);
 
-                // Draw Watermark
                 if (watermarkImg.src && watermarkImg.complete && watermarkImg.naturalHeight !== 0) {
                     ctx.drawImage(watermarkImg, 0, 0, outputSize, outputSize);
                 }
@@ -371,7 +352,6 @@
             resultSection.scrollIntoView({ behavior: 'smooth' });
         });
 
-        // ZIP Download
         downloadZipBtn.addEventListener('click', () => {
             const zip = new JSZip();
             const imgFolder = zip.folder("Scouts_Processed_Photos");
