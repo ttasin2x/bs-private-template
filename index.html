@@ -3,231 +3,1092 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BD Scouts Pro Watermark Studio</title>
-    <!-- JSZip Library -->
+    <title>BD Scouts Pro — Watermark Studio</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <style>
         :root {
-            --primary: #008C44;
-            --primary-hover: #006B33;
-            --bg-gradient: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-            --card-bg: rgba(255, 255, 255, 0.95);
-            --text-main: #1b5e20;
-            --text-muted: #4caf50;
+            --bg-color: #f8f9fb;
+            --card-bg: #ffffff;
+            --text-dark: #1a1a2e;
+            --text-muted: #6b7280;
+            --text-light: #9ca3af;
+            --border-color: #e5e7eb;
+            --border-light: #f3f4f6;
+            --btn-dark: #0f172a;
+            --btn-hover: #1e293b;
+            --accent-green: #166534;
+            --accent-red: #dc2626;
+            --accent-gold: #d97706;
+            --accent-blue: #3b82f6;
+            --accent-teal: #0d9488;
+            --gradient-start: #166534;
+            --gradient-end: #0f172a;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+            --shadow-lg: 0 8px 30px rgba(0,0,0,0.08);
+            --shadow-xl: 0 20px 60px rgba(0,0,0,0.1);
+            --radius-sm: 12px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --radius-xl: 32px;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+        }
 
         body {
-            background: var(--bg-gradient);
-            color: var(--text-main);
+            background-color: var(--bg-color);
+            color: var(--text-dark);
             min-height: 100vh;
-            padding: 40px 20px;
+            overflow-x: hidden;
         }
 
-        .container { max-width: 1100px; margin: 0 auto; }
+        /* Animated background particles */
+        .bg-particles {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.04;
+            animation: float 20s infinite ease-in-out;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.04; }
+            50% { transform: translateY(-60px) rotate(180deg); opacity: 0.08; }
+        }
 
-        header { text-align: center; margin-bottom: 40px; }
-        header h1 { font-size: 2.8rem; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
-        header p { color: #2E7D32; font-size: 1.1rem; font-weight: 600; }
+        /* Hero Section */
+        .hero {
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+            padding: 60px 20px 80px;
+            text-align: center;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.5;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 8px 20px;
+            border-radius: 50px;
+            color: rgba(255,255,255,0.9);
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+        .hero-badge i { color: #fbbf24; }
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 12px;
+            letter-spacing: -1px;
+            line-height: 1.1;
+            animation: fadeInUp 0.8s ease-out 0.1s both;
+        }
+        .hero h1 span {
+            background: linear-gradient(90deg, #fbbf24, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero p {
+            color: rgba(255,255,255,0.75);
+            font-size: 1.15rem;
+            font-weight: 400;
+            max-width: 500px;
+            margin: 0 auto 30px;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 30px;
+            animation: fadeInUp 0.8s ease-out 0.3s both;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #ffffff;
+        }
+        .stat-label {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.6);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
 
-        .dashboard { display: grid; grid-template-columns: 1fr 2fr; gap: 25px; }
-        @media (max-width: 800px) { .dashboard { grid-template-columns: 1fr; } }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
+        /* Main Container */
+        .container { 
+            max-width: 1200px; 
+            margin: -40px auto 0;
+            padding: 0 20px 60px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Dashboard */
+        .dashboard { 
+            display: grid; 
+            grid-template-columns: 320px 1fr; 
+            gap: 24px; 
+        }
+        @media (max-width: 900px) { 
+            .dashboard { grid-template-columns: 1fr; } 
+            .hero h1 { font-size: 2rem; }
+            .hero-stats { gap: 20px; }
+        }
+
+        /* Card Base */
         .card {
             background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            box-shadow: var(--shadow-xl);
+        }
+        .card-header {
+            padding: 24px 28px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .card-header-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+        .card-header-icon.green { background: #dcfce7; color: var(--accent-green); }
+        .card-header-icon.blue { background: #dbeafe; color: var(--accent-blue); }
+        .card-header-icon.gold { background: #fef3c7; color: var(--accent-gold); }
+        .card-header-icon.teal { background: #ccfbf1; color: var(--accent-teal); }
+        .card-header h3 { 
+            font-size: 1.1rem; 
+            color: var(--text-dark); 
+            font-weight: 700;
+        }
+        .card-header p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        .card-body {
+            padding: 24px 28px 28px;
+        }
+
+        /* Template Preview */
+        .template-preview-wrapper {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-radius: var(--radius-md);
             padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 140, 68, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.8);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
         }
-
-        .card h3 { font-size: 1.3rem; margin-bottom: 20px; color: var(--primary); }
-
+        .template-preview-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(22,101,52,0.04) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
         .template-preview {
-            width: 100%; aspect-ratio: 1/1;
-            border: 2px dashed #81c784; border-radius: 15px;
-            display: flex; align-items: center; justify-content: center;
-            background: #f1f8e9; margin-bottom: 15px;
+            width: 100%; 
+            aspect-ratio: 1/1;
+            max-width: 200px; 
+            margin: 0 auto;
+            border-radius: var(--radius-md);
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            background: white;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            z-index: 1;
         }
-        .template-preview img { max-width: 100%; max-height: 100%; object-fit: contain; }
-
-        .custom-btn {
-            background: white; border: 2px solid var(--primary); color: var(--primary);
-            padding: 10px 20px; border-radius: 10px; cursor: pointer;
-            font-weight: 600; width: 100%; text-align: center; display: inline-block;
+        .template-preview img { 
+            max-width: 85%; 
+            max-height: 85%; 
+            object-fit: contain; 
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
         }
-        .custom-btn:hover { background: var(--primary); color: white; }
+        .template-info {
+            margin-top: 16px;
+            position: relative;
+            z-index: 1;
+        }
+        .template-info h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        .template-info p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+        .template-dimensions {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent-green);
+            margin-top: 10px;
+            box-shadow: var(--shadow-sm);
+        }
 
+        /* Upload Area */
         .upload-area {
-            border: 3px dashed #81c784; border-radius: 20px;
-            padding: 40px 20px; text-align: center; cursor: pointer;
-            background: rgba(255,255,255,0.6); margin-bottom: 20px;
+            border: 2px dashed #d1d5db; 
+            border-radius: var(--radius-md);
+            padding: 50px 30px; 
+            text-align: center; 
+            cursor: pointer;
+            background: linear-gradient(135deg, #fafafa 0%, #f9fafb 100%);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .upload-area::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at center, rgba(59,130,246,0.03) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .upload-area:hover {
+            border-color: var(--accent-blue);
+            background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        .upload-area:hover::before { opacity: 1; }
+        .upload-area.dragover {
+            border-color: var(--accent-green);
+            background: #f0fdf4;
+            transform: scale(1.01);
+        }
+        .upload-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #dbeafe, #eff6ff);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 1.5rem;
+            color: var(--accent-blue);
+            transition: transform 0.3s ease;
+        }
+        .upload-area:hover .upload-icon {
+            transform: scale(1.1) rotate(-5deg);
+        }
+        .upload-area h3 {
+            color: var(--text-dark);
+            font-size: 1.1rem;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+        .upload-area p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        .upload-formats {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .format-tag {
+            background: white;
+            border: 1px solid var(--border-color);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
         }
 
-        /* Interactive Crop Gallery */
+        /* Gallery - UPDATE: Set to exactly 2 images per row */
+        .gallery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .gallery-count {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        .gallery-count .count-badge {
+            background: var(--accent-blue);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+        }
+        .clear-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .clear-btn:hover {
+            background: #fef2f2;
+            border-color: #fecaca;
+            color: var(--accent-red);
+        }
         .gallery {
-            display: flex; flex-wrap: wrap; gap: 15px;
-            max-height: 350px; overflow-y: auto; padding-right: 5px;
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); /* 1 line e 2 ta image */
+            gap: 20px;
+            max-height: 500px; 
+            overflow-y: auto; 
+            padding-right: 8px;
+        }
+        @media (max-width: 500px) {
+            .gallery { grid-template-columns: 1fr; } /* Mobile exception for better viewing */
+        }
+        .gallery::-webkit-scrollbar {
+            width: 6px;
+        }
+        .gallery::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .gallery::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 10px;
+        }
+        .gallery::-webkit-scrollbar-thumb:hover {
+            background: var(--text-light);
         }
 
+        /* Crop Container */
+        .crop-wrapper {
+            position: relative;
+            animation: slideIn 0.4s ease-out;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
         .crop-container {
-            width: 140px; height: 140px;
-            position: relative; overflow: hidden;
-            border-radius: 12px; border: 3px solid #a5d6a7;
-            cursor: grab; background: #ddd;
+            width: 100%; 
+            aspect-ratio: 1/1; 
+            position: relative; 
+            overflow: hidden;
+            border-radius: var(--radius-md); 
+            border: 2px solid var(--border-color);
+            cursor: grab; 
+            background: linear-gradient(45deg, #f3f4f6 25%, transparent 25%), 
+                        linear-gradient(-45deg, #f3f4f6 25%, transparent 25%), 
+                        linear-gradient(45deg, transparent 75%, #f3f4f6 75%), 
+                        linear-gradient(-45deg, transparent 75%, #f3f4f6 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            background-color: #e5e7eb;
             touch-action: none;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: border-color 0.3s, box-shadow 0.3s;
         }
-        .crop-container:active { cursor: grabbing; border-color: var(--primary); }
-        
+        .crop-container:hover {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 4px rgba(59,130,246,0.1);
+        }
+        .crop-container:active { 
+            cursor: grabbing; 
+        }
         .crop-img {
-            position: absolute; transform-origin: top left;
+            position: absolute; 
+            transform-origin: top left;
             pointer-events: none;
+            transition: none;
         }
+        .crop-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border: 2px solid rgba(59,130,246,0.3);
+            border-radius: var(--radius-md);
+            pointer-events: none;
+            z-index: 5;
+        }
+        .crop-overlay::before,
+        .crop-overlay::after {
+            content: '';
+            position: absolute;
+            background: rgba(59,130,246,0.2);
+        }
+        .crop-overlay::before {
+            top: 33.33%; left: 0; right: 0; height: 1px;
+        }
+        .crop-overlay::after {
+            top: 66.66%; left: 0; right: 0; height: 1px;
+        }
+        .crop-overlay .grid-v1,
+        .crop-overlay .grid-v2 {
+            position: absolute;
+            top: 0; bottom: 0; width: 1px;
+            background: rgba(59,130,246,0.2);
+        }
+        .crop-overlay .grid-v1 { left: 33.33%; }
+        .crop-overlay .grid-v2 { left: 66.66%; }
 
         .crop-hint {
-            position: absolute; bottom: 0; left: 0; width: 100%;
-            background: rgba(0, 140, 68, 0.8); color: white;
-            font-size: 0.7rem; text-align: center; padding: 4px 0;
-            pointer-events: none; font-weight: 600;
+            position: absolute; 
+            bottom: 0; left: 0; width: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); 
+            color: white;
+            font-size: 0.75rem; 
+            text-align: center; 
+            padding: 20px 8px 10px;
+            pointer-events: none; 
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .crop-container:hover .crop-hint { opacity: 1; }
+        .crop-filename {
+            margin-top: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 0 4px;
+        }
+        .crop-remove {
+            position: absolute;
+            top: -8px; right: -8px;
+            width: 24px; height: 24px;
+            background: var(--accent-red);
+            color: white;
+            border: 2px solid white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            cursor: pointer;
+            z-index: 20;
+            opacity: 0;
+            transition: opacity 0.2s, transform 0.2s;
+            box-shadow: 0 2px 8px rgba(220,38,38,0.3);
+        }
+        .crop-wrapper:hover .crop-remove { opacity: 1; }
+        .crop-remove:hover { transform: scale(1.1); }
+
+        /* Zoom Controls */
+        .zoom-controls {
+            position: absolute; 
+            top: 10px; right: 10px;
+            display: flex; 
+            flex-direction: column;
+            gap: 6px; 
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .crop-container:hover .zoom-controls { opacity: 1; }
+        .zoom-btn {
+            background: rgba(255,255,255,0.95);
+            border: 1px solid var(--border-color); 
+            color: var(--text-dark);
+            width: 32px; height: 32px; 
+            border-radius: 50%;
+            font-size: 1rem; 
+            font-weight: 600; 
+            line-height: 1;
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08); 
+            transition: all 0.2s;
+        }
+        .zoom-btn:hover { 
+            background: #ffffff; 
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+        .zoom-btn:active { transform: scale(0.95); }
+
+        /* Progress */
+        .progress-container { 
+            display: none; 
+            margin-top: 24px; 
+            padding: 20px;
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border-radius: var(--radius-md);
+            border: 1px solid #bbf7d0;
+        }
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .progress-text { 
+            font-size: 0.9rem; 
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+        .progress-percent {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--accent-green);
+            background: white;
+            padding: 2px 10px;
+            border-radius: 20px;
+        }
+        .progress-bar { 
+            width: 100%; 
+            height: 10px;
+            background: #e5e7eb; 
+            border-radius: 10px; 
+            overflow: hidden;
+            position: relative;
+        }
+        .progress-fill { 
+            height: 100%; 
+            width: 0%; 
+            background: linear-gradient(90deg, var(--accent-green), #22c55e); 
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+            border-radius: 10px;
+            position: relative;
+        }
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
 
-        /* Progress Bar & Actions */
-        .progress-container { display: none; margin-top: 20px; }
-        .progress-bar { width: 100%; height: 12px; background: #c8e6c9; border-radius: 10px; overflow: hidden; margin-bottom: 10px; }
-        .progress-fill { height: 100%; width: 0%; background: var(--primary); transition: width 0.3s ease; }
-        .progress-text { font-size: 0.9rem; font-weight: 600; }
-
+        /* Action Buttons */
         .action-group {
-            display: flex; justify-content: flex-end; gap: 15px;
-            margin-top: 20px; border-top: 1px solid #c8e6c9; padding-top: 20px;
+            display: flex; 
+            justify-content: center;
+            gap: 16px;
+            margin-top: 30px; 
         }
         .primary-btn {
-            background: var(--primary); color: white; border: none;
-            padding: 12px 30px; font-size: 1rem; border-radius: 12px;
-            cursor: pointer; font-weight: 600;
+            background: linear-gradient(135deg, var(--btn-dark), #1e293b); 
+            color: white; 
+            border: none;
+            padding: 16px 40px; 
+            font-size: 1rem; 
+            border-radius: 30px;
+            cursor: pointer; 
+            font-weight: 700;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(15,23,42,0.2);
+            position: relative;
+            overflow: hidden;
         }
-        .primary-btn:hover:not(:disabled) { background: var(--primary-hover); transform: translateY(-2px); }
-        .primary-btn:disabled { background: #a5d6a7; cursor: not-allowed; }
-        .zip-btn { display: none; background: #2E7D32; }
+        .primary-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s;
+        }
+        .primary-btn:hover:not(:disabled) { 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(15,23,42,0.3);
+        }
+        .primary-btn:hover:not(:disabled)::before {
+            left: 100%;
+        }
+        .primary-btn:disabled { 
+            background: #e5e7eb; 
+            color: #9ca3af;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+        .primary-btn i { font-size: 1.1rem; }
+        .zip-btn { 
+            display: none; 
+            background: linear-gradient(135deg, var(--accent-green), #15803d);
+            box-shadow: 0 4px 15px rgba(22,101,52,0.2);
+        }
+        .zip-btn:hover:not(:disabled) {
+            box-shadow: 0 8px 25px rgba(22,101,52,0.3);
+        }
+        .secondary-btn {
+            background: white;
+            border: 2px solid var(--border-color);
+            color: var(--text-dark);
+            padding: 16px 32px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .secondary-btn:hover {
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
 
-        /* Results */
-        .result-section { margin-top: 40px; display: none; }
-        .result-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; }
-        .result-card { background: white; padding: 10px; border-radius: 15px; text-align: center; border: 1px solid #c8e6c9; }
-        .result-card img { width: 100%; aspect-ratio: 1/1; border-radius: 10px; margin-bottom: 10px; }
+        /* Results Section - UPDATE: Set to exactly 2 images per row */
+        .result-section { 
+            margin-top: 40px; 
+            display: none;
+            animation: fadeInUp 0.6s ease-out;
+        }
+        .result-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); /* 1 line e 2 ta image */
+            gap: 20px; 
+        }
+        @media (max-width: 500px) {
+            .result-grid { grid-template-columns: 1fr; } /* Mobile exception */
+        }
+        .result-card { 
+            background: white; 
+            padding: 14px; 
+            border-radius: var(--radius-md); 
+            text-align: center; 
+            border: 1px solid var(--border-light);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            animation: slideIn 0.4s ease-out;
+        }
+        .result-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent-blue);
+        }
+        .result-card img { 
+            width: 100%; 
+            aspect-ratio: 1/1; 
+            border-radius: var(--radius-sm); 
+            margin-bottom: 12px;
+            object-fit: cover;
+        }
+        .result-card .filename {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .custom-btn {
+            background: linear-gradient(135deg, #f3f4f6, #e5e7eb); 
+            border: none; 
+            color: var(--text-dark);
+            padding: 8px 18px; 
+            border-radius: 20px; 
+            cursor: pointer;
+            font-weight: 600; 
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .custom-btn:hover { 
+            background: linear-gradient(135deg, var(--accent-blue), #2563eb);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        .empty-state p {
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-light);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .footer a {
+            color: var(--accent-green);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        /* Toast Notification */
+        .toast-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .toast {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 16px 24px;
+            box-shadow: var(--shadow-xl);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            animation: toastIn 0.4s ease-out;
+            border-left: 4px solid var(--accent-green);
+        }
+        .toast.error { border-left-color: var(--accent-red); }
+        .toast.info { border-left-color: var(--accent-blue); }
+        @keyframes toastIn {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes toastOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100px); opacity: 0; }
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
+    <div class="bg-particles" id="particles"></div>
+
+    <div class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-star"></i>
+                Official Bangladesh Scouts Watermark
+            </div>
+            <h1>BD Scouts <span>Watermark</span></h1>
+            <p>“This tool is only for Media Team members.”</p>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="statCount">0</div>
+                    <div class="stat-label">Photos Ready</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">1:1</div>
+                    <div class="stat-label">Square Output</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">HD</div>
+                    <div class="stat-label">High Quality</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="container">
-        <header>
-            <h1>⚜️ Bangladesh Scouts</h1>
-            <p>Smart Watermark & Manual Frame Adjust Tool</p>
-        </header>
-
         <div class="dashboard">
             <div class="card">
-                <h3>🏕️ Scout Template</h3>
-                <div class="template-preview">
-                    <!-- Ekhane 'photos/watermark.png' link kora hoyeche -->
-                    <img id="wmPreview" src="photos/watermark.png" onerror="this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='">
+                <div class="card-header">
+                    <div class="card-header-icon green">
+                        <i class="fas fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <h3>Scout Template</h3>
+                        <p>Official watermark overlay</p>
+                    </div>
                 </div>
-                <label class="custom-btn">
-                    Upload Custom Frame
-                    <input type="file" id="wmInput" accept="image/png" style="display: none;">
-                </label>
-                <p style="text-align: center; font-size: 0.8rem; margin-top: 10px; color: #4caf50;">*Transparent PNG (1:1 ratio).</p>
+                <div class="card-body">
+                    <div class="template-preview-wrapper">
+                        <div class="template-preview">
+                            <img id="wmPreview" src="photos/watermark.png" onerror="this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='">
+                        </div>
+                        <div class="template-info">
+                            <h4>Bangladesh Scouts</h4>
+                            <p>Official Emblem Watermark</p>
+                            <div class="template-dimensions">
+                                <i class="fas fa-ruler-combined"></i>
+                                1:1 Square Ratio
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="card">
-                <h3>📁 Upload & Adjust Photos</h3>
-                
-                <div class="upload-area" id="dropArea" onclick="document.getElementById('imageInput').click()">
-                    <div style="font-size: 3rem; margin-bottom: 10px;">📸</div>
-                    <h3 style="color: var(--primary);">Click or Drag Photos Here</h3>
-                    <input type="file" id="imageInput" accept="image/*" multiple style="display: none;">
+                <div class="card-header">
+                    <div class="card-header-icon blue">
+                        <i class="fas fa-images"></i>
+                    </div>
+                    <div>
+                        <h3>Upload & Adjust</h3>
+                        <p>Drag, zoom, and position your photos</p>
+                    </div>
                 </div>
+                <div class="card-body">
+                    <div class="upload-area" id="dropArea">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <h3>Drop Photos Here</h3>
+                        <p>or click to browse your files</p>
+                        <div class="upload-formats">
+                            <span class="format-tag">JPG</span>
+                            <span class="format-tag">PNG</span>
+                            <span class="format-tag">WEBP</span>
+                        </div>
+                        <input type="file" id="imageInput" accept="image/*" multiple style="display: none;">
+                    </div>
 
-                <div class="gallery" id="uploadPreview"></div>
+                    <div class="gallery-header" id="galleryHeader" style="display:none;">
+                        <div class="gallery-count">
+                            <i class="fas fa-layer-group"></i>
+                            <span id="photoCount">0</span> photos
+                            <span class="count-badge" id="countBadge">0</span>
+                        </div>
+                        <button class="clear-btn" id="clearBtn" onclick="clearAll()">
+                            <i class="fas fa-trash-alt"></i> Clear All
+                        </button>
+                    </div>
 
-                <div class="progress-container" id="progressBox">
-                    <div class="progress-text" id="progressText">Processing 0 / 0</div>
-                    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-                </div>
+                    <div class="gallery" id="uploadPreview"></div>
+                    <div class="empty-state" id="emptyState">
+                        <i class="fas fa-images"></i>
+                        <p>No photos uploaded yet. Drag & drop or click to upload!</p>
+                    </div>
 
-                <div class="action-group">
-                    <button id="processBtn" class="primary-btn" disabled>Apply Watermark</button>
-                    <button id="downloadZipBtn" class="primary-btn zip-btn">📦 Download All (ZIP)</button>
+                    <div class="progress-container" id="progressBox">
+                        <div class="progress-header">
+                            <div class="progress-text" id="progressText">Processing...</div>
+                            <div class="progress-percent" id="progressPercent">0%</div>
+                        </div>
+                        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+                    </div>
+
+                    <div class="action-group">
+                        <button id="processBtn" class="primary-btn" disabled>
+                            <i class="fas fa-magic"></i>
+                            Apply Watermark
+                        </button>
+                        <button id="downloadZipBtn" class="primary-btn zip-btn">
+                            <i class="fas fa-file-zipper"></i>
+                            Download ZIP
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="result-section" id="resultSection">
             <div class="card">
-                <h3>✅ Processed Photos</h3>
-                <div class="result-grid" id="finalGallery"></div>
+                <div class="card-header">
+                    <div class="card-header-icon gold">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div>
+                        <h3>Processed Photos</h3>
+                        <p>Your watermarked photos are ready!</p>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="result-grid" id="finalGallery"></div>
+                </div>
             </div>
         </div>
     </div>
 
+    <div class="footer">
+        <p>Made with <i class="fas fa-heart" style="color: var(--accent-red);"></i> for Bangladesh Scouts</p>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
     <script>
-        const wmInput = document.getElementById('wmInput');
+        // ========== PARTICLES ==========
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 15; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            const size = Math.random() * 100 + 50;
+            p.style.width = size + 'px';
+            p.style.height = size + 'px';
+            p.style.background = Math.random() > 0.5 ? 'var(--accent-green)' : 'var(--accent-blue)';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.top = Math.random() * 100 + '%';
+            p.style.animationDelay = Math.random() * 20 + 's';
+            p.style.animationDuration = (15 + Math.random() * 10) + 's';
+            particlesContainer.appendChild(p);
+        }
+
+        // ========== TOAST ==========
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            const icon = type === 'error' ? 'fa-circle-xmark' : type === 'info' ? 'fa-circle-info' : 'fa-circle-check';
+            toast.innerHTML = `<i class="fas ${icon}" style="color: ${type === 'error' ? 'var(--accent-red)' : type === 'info' ? 'var(--accent-blue)' : 'var(--accent-green)'};"></i> ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = 'toastOut 0.4s ease-out forwards';
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
+
+        // ========== DOM ELEMENTS ==========
         const wmPreview = document.getElementById('wmPreview');
         const imageInput = document.getElementById('imageInput');
+        const dropArea = document.getElementById('dropArea');
         const uploadPreview = document.getElementById('uploadPreview');
         const processBtn = document.getElementById('processBtn');
         const downloadZipBtn = document.getElementById('downloadZipBtn');
         const resultSection = document.getElementById('resultSection');
         const finalGallery = document.getElementById('finalGallery');
+        const emptyState = document.getElementById('emptyState');
+        const galleryHeader = document.getElementById('galleryHeader');
+        const photoCount = document.getElementById('photoCount');
+        const countBadge = document.getElementById('countBadge');
+        const statCount = document.getElementById('statCount');
 
         let cropItems = []; 
         let processedImagesData = [];
-        const frameSize = 140; 
 
-        // Default Watermark location updated to 'photos/watermark.png'
+        // Watermark image
         const watermarkImg = new Image();
         watermarkImg.src = 'photos/watermark.png';
-        const savedWM = localStorage.getItem('scoutWatermark');
-        if (savedWM) { wmPreview.src = savedWM; watermarkImg.src = savedWM; }
-
-        wmInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                const dataUrl = event.target.result;
-                wmPreview.src = dataUrl; watermarkImg.src = dataUrl;
-                try { localStorage.setItem('scoutWatermark', dataUrl); } catch (err) {}
-            };
-            reader.readAsDataURL(file);
-        });
+        watermarkImg.onerror = () => {
+            showToast('Watermark template not found. Please add photos/watermark.png', 'error');
+        };
 
         let activeDrag = null;
         let startX, startY, initialOffsetX, initialOffsetY;
 
+        // ========== DRAG HANDLERS ==========
         const onMove = (e) => {
             if (!activeDrag) return;
             e.preventDefault();
             const clientX = e.type.includes('mouse') ? e.pageX : e.touches[0].pageX;
             const clientY = e.type.includes('mouse') ? e.pageY : e.touches[0].pageY;
-            
+
             const dx = clientX - startX;
             const dy = clientY - startY;
-            
-            let newX = initialOffsetX + dx;
-            let newY = initialOffsetY + dy;
-            
-            newX = Math.min(0, Math.max(newX, frameSize - activeDrag.renderW));
-            newY = Math.min(0, Math.max(newY, frameSize - activeDrag.renderH));
-            
+
+            const dxPercent = (dx / activeDrag.container.clientWidth) * 100;
+            const dyPercent = (dy / activeDrag.container.clientHeight) * 100;
+
+            let newX = initialOffsetX + dxPercent;
+            let newY = initialOffsetY + dyPercent;
+
+            newX = Math.min(0, Math.max(newX, 100 - activeDrag.renderW));
+            newY = Math.min(0, Math.max(newY, 100 - activeDrag.renderH));
+
             activeDrag.offsetX = newX;
             activeDrag.offsetY = newY;
-            activeDrag.imgEl.style.left = newX + 'px';
-            activeDrag.imgEl.style.top = newY + 'px';
+            activeDrag.imgEl.style.left = newX + '%';
+            activeDrag.imgEl.style.top = newY + '%';
         };
 
         const onEnd = () => { activeDrag = null; };
@@ -237,54 +1098,156 @@
         window.addEventListener('touchmove', onMove, {passive: false});
         window.addEventListener('touchend', onEnd);
 
+        // ========== ZOOM ==========
+        function applyZoom(item, zoomChange) {
+            const oldW = item.renderW;
+            const oldH = item.renderH;
+
+            item.zoomLevel += zoomChange;
+            if (item.zoomLevel < 1) item.zoomLevel = 1;
+
+            item.renderW = item.baseW * item.zoomLevel;
+            item.renderH = item.baseH * item.zoomLevel;
+
+            item.offsetX -= (item.renderW - oldW) / 2;
+            item.offsetY -= (item.renderH - oldH) / 2;
+
+            item.offsetX = Math.min(0, Math.max(item.offsetX, 100 - item.renderW));
+            item.offsetY = Math.min(0, Math.max(item.offsetY, 100 - item.renderH));
+
+            item.imgEl.style.width = item.renderW + '%';
+            item.imgEl.style.height = item.renderH + '%';
+            item.imgEl.style.left = item.offsetX + '%';
+            item.imgEl.style.top = item.offsetY + '%';
+        }
+
+        // ========== DRAG & DROP ==========
+        dropArea.addEventListener('click', () => imageInput.click());
+
+        dropArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropArea.classList.add('dragover');
+        });
+
+        dropArea.addEventListener('dragleave', () => {
+            dropArea.classList.remove('dragover');
+        });
+
+        dropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropArea.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+
         imageInput.addEventListener('change', (e) => handleFiles(e.target.files));
 
+        // ========== FILE HANDLING ==========
         function handleFiles(files) {
             const newFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
-            if(newFiles.length === 0) return;
+            if (newFiles.length === 0) {
+                showToast('Please upload valid image files', 'error');
+                return;
+            }
 
+            showToast(`${newFiles.length} photo${newFiles.length > 1 ? 's' : ''} added!`, 'success');
             processBtn.disabled = false;
             downloadZipBtn.style.display = 'none';
             resultSection.style.display = 'none';
+            emptyState.style.display = 'none';
+            galleryHeader.style.display = 'flex';
 
-            newFiles.forEach(file => {
+            newFiles.forEach((file, index) => {
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     const img = new Image();
                     img.onload = () => {
-                        const scale = Math.max(frameSize / img.width, frameSize / img.height);
-                        const renderW = img.width * scale;
-                        const renderH = img.height * scale;
-                        
-                        let currentX = (frameSize - renderW) / 2;
-                        let currentY = (frameSize - renderH) / 2;
+                        const ratioW = img.width / img.height;
+                        let basePercentW, basePercentH;
+
+                        if (ratioW > 1) {
+                            basePercentH = 100;
+                            basePercentW = 100 * ratioW;
+                        } else {
+                            basePercentW = 100;
+                            basePercentH = 100 / ratioW;
+                        }
+
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'crop-wrapper';
+                        wrapper.style.animationDelay = (index * 0.05) + 's';
 
                         const container = document.createElement('div');
                         container.className = 'crop-container';
-                        
+
+                        const itemData = {
+                            file: file, origImg: img, imgEl: null, container: container, wrapper: wrapper,
+                            zoomLevel: 1, baseW: basePercentW, baseH: basePercentH,
+                            renderW: basePercentW, renderH: basePercentH, 
+                            offsetX: (100 - basePercentW) / 2, offsetY: (100 - basePercentH) / 2
+                        };
+
                         const imgEl = document.createElement('img');
                         imgEl.src = img.src;
                         imgEl.className = 'crop-img';
-                        imgEl.style.width = renderW + 'px';
-                        imgEl.style.height = renderH + 'px';
-                        imgEl.style.left = currentX + 'px';
-                        imgEl.style.top = currentY + 'px';
+                        imgEl.style.width = itemData.renderW + '%';
+                        imgEl.style.height = itemData.renderH + '%';
+                        imgEl.style.left = itemData.offsetX + '%';
+                        imgEl.style.top = itemData.offsetY + '%';
+                        itemData.imgEl = imgEl;
 
+                        // Grid overlay
+                        const overlay = document.createElement('div');
+                        overlay.className = 'crop-overlay';
+                        overlay.innerHTML = '<div class="grid-v1"></div><div class="grid-v2"></div>';
+
+                        // Zoom controls
+                        const zoomBox = document.createElement('div');
+                        zoomBox.className = 'zoom-controls';
+
+                        const zoomInBtn = document.createElement('button');
+                        zoomInBtn.className = 'zoom-btn'; zoomInBtn.innerHTML = '<i class="fas fa-plus"></i>';
+                        zoomInBtn.onclick = (e) => { e.stopPropagation(); applyZoom(itemData, 0.15); };
+
+                        const zoomOutBtn = document.createElement('button');
+                        zoomOutBtn.className = 'zoom-btn'; zoomOutBtn.innerHTML = '<i class="fas fa-minus"></i>';
+                        zoomOutBtn.onclick = (e) => { e.stopPropagation(); applyZoom(itemData, -0.15); };
+
+                        zoomBox.appendChild(zoomInBtn);
+                        zoomBox.appendChild(zoomOutBtn);
+
+                        // Hint
                         const hint = document.createElement('div');
                         hint.className = 'crop-hint';
-                        hint.innerText = "✋ Drag to Adjust";
+                        hint.innerHTML = '<i class="fas fa-hand"></i> Drag to position';
+
+                        // Remove button
+                        const removeBtn = document.createElement('div');
+                        removeBtn.className = 'crop-remove';
+                        removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+                        removeBtn.onclick = (e) => {
+                            e.stopPropagation();
+                            removeItem(itemData);
+                        };
 
                         container.appendChild(imgEl);
+                        container.appendChild(overlay);
+                        container.appendChild(zoomBox);
                         container.appendChild(hint);
-                        uploadPreview.appendChild(container);
+                        wrapper.appendChild(container);
+                        wrapper.appendChild(removeBtn);
 
-                        const itemData = {
-                            file: file, origImg: img, imgEl: imgEl, scale: scale,
-                            renderW: renderW, renderH: renderH, offsetX: currentX, offsetY: currentY
-                        };
+                        // Filename
+                        const filename = document.createElement('div');
+                        filename.className = 'crop-filename';
+                        filename.textContent = file.name;
+                        wrapper.appendChild(filename);
+
+                        uploadPreview.appendChild(wrapper);
                         cropItems.push(itemData);
+                        updateCounts();
 
                         const startDrag = (e) => {
+                            if(e.target.closest('.zoom-btn') || e.target.closest('.crop-remove')) return;
                             activeDrag = itemData;
                             startX = e.type.includes('mouse') ? e.pageX : e.touches[0].pageX;
                             startY = e.type.includes('mouse') ? e.pageY : e.touches[0].pageY;
@@ -301,10 +1264,44 @@
             });
         }
 
+        function updateCounts() {
+            const count = cropItems.length;
+            photoCount.textContent = count;
+            countBadge.textContent = count;
+            statCount.textContent = count;
+            if (count === 0) {
+                emptyState.style.display = 'block';
+                galleryHeader.style.display = 'none';
+                processBtn.disabled = true;
+            }
+        }
+
+        function removeItem(item) {
+            const index = cropItems.indexOf(item);
+            if (index > -1) {
+                cropItems.splice(index, 1);
+                item.wrapper.remove();
+                updateCounts();
+                showToast('Photo removed', 'info');
+            }
+        }
+
+        function clearAll() {
+            cropItems = [];
+            uploadPreview.innerHTML = '';
+            updateCounts();
+            processBtn.disabled = true;
+            downloadZipBtn.style.display = 'none';
+            resultSection.style.display = 'none';
+            showToast('All photos cleared', 'info');
+        }
+
+        // ========== PROCESS ==========
         processBtn.addEventListener('click', async () => {
             if (cropItems.length === 0) return;
 
             processBtn.disabled = true;
+            processBtn.innerHTML = '<div class="spinner"></div> Processing...';
             document.getElementById('progressBox').style.display = 'block';
             finalGallery.innerHTML = '';
             resultSection.style.display = 'block';
@@ -316,55 +1313,102 @@
             for (let i = 0; i < total; i++) {
                 const item = cropItems[i];
                 const img = item.origImg;
-                
-                const outputSize = Math.min(img.width, img.height);
-                const sourceX = Math.abs(item.offsetX) / item.scale;
-                const sourceY = Math.abs(item.offsetY) / item.scale;
+
+                const sourceSize = img.width * (100 / item.renderW);
+                const sourceX = (Math.abs(item.offsetX) / 100) * sourceSize;
+                const sourceY = (Math.abs(item.offsetY) / 100) * sourceSize;
+
+                const outputSize = Math.max(1200, Math.min(img.width, img.height)); 
 
                 const canvas = document.createElement('canvas');
                 canvas.width = outputSize;
                 canvas.height = outputSize;
                 const ctx = canvas.getContext('2d');
 
-                ctx.drawImage(img, sourceX, sourceY, outputSize, outputSize, 0, 0, outputSize, outputSize);
+                // High quality rendering
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
 
+                ctx.drawImage(img, sourceX, sourceY, sourceSize, sourceSize, 0, 0, outputSize, outputSize);
+
+                // Apply watermark with blend mode for better integration
                 if (watermarkImg.src && watermarkImg.complete && watermarkImg.naturalHeight !== 0) {
+                    ctx.globalCompositeOperation = 'source-over';
                     ctx.drawImage(watermarkImg, 0, 0, outputSize, outputSize);
                 }
 
                 const finalDataUrl = canvas.toDataURL('image/jpeg', 0.95);
-                processedImagesData.push({ name: `scouts_${item.file.name}`, data: finalDataUrl });
+                const safeName = item.file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+                processedImagesData.push({ name: `scouts_${safeName}`, data: finalDataUrl });
 
                 const card = document.createElement('div');
                 card.className = 'result-card';
-                card.innerHTML = `<img src="${finalDataUrl}"><a href="${finalDataUrl}" download="scouts_${item.file.name}" class="custom-btn" style="padding: 5px; font-size: 0.8rem;">⬇ Save</a>`;
+                card.style.animationDelay = (i * 0.05) + 's';
+                card.innerHTML = `
+                    <img src="${finalDataUrl}" alt="Processed">
+                    <div class="filename">scouts_${safeName}</div>
+                    <a href="${finalDataUrl}" download="scouts_${safeName}" class="custom-btn">
+                        <i class="fas fa-download"></i> Save
+                    </a>
+                `;
                 finalGallery.appendChild(card);
 
                 completed++;
-                document.getElementById('progressFill').style.width = `${(completed / total) * 100}%`;
-                document.getElementById('progressText').innerText = `Processing ${completed} / ${total}`;
-                await new Promise(r => setTimeout(r, 50)); 
+                const percent = Math.round((completed / total) * 100);
+                document.getElementById('progressFill').style.width = percent + '%';
+                document.getElementById('progressText').innerText = `Processing ${completed} of ${total}`;
+                document.getElementById('progressPercent').innerText = percent + '%';
+
+                await new Promise(r => setTimeout(r, 30));
             }
 
             processBtn.disabled = false;
-            document.getElementById('progressText').innerText = `✅ Success! ${total} photos generated.`;
-            downloadZipBtn.style.display = 'inline-block';
-            resultSection.scrollIntoView({ behavior: 'smooth' });
+            processBtn.innerHTML = '<i class="fas fa-magic"></i> Apply Watermark';
+            document.getElementById('progressText').innerText = `✅ ${total} photos processed successfully!`;
+            document.getElementById('progressPercent').innerText = '100%';
+            downloadZipBtn.style.display = 'inline-flex';
+
+            showToast(`${total} photos watermarked successfully!`, 'success');
+            resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
 
+        // ========== ZIP DOWNLOAD ==========
         downloadZipBtn.addEventListener('click', () => {
+            if (processedImagesData.length === 0) return;
+
+            downloadZipBtn.innerHTML = '<div class="spinner"></div> Creating ZIP...';
+            downloadZipBtn.disabled = true;
+
             const zip = new JSZip();
-            const imgFolder = zip.folder("Scouts_Processed_Photos");
+            const imgFolder = zip.folder("BD_Scouts_Processed");
+
             processedImagesData.forEach(item => {
                 const base64Data = item.data.split(',')[1];
                 imgFolder.file(item.name, base64Data, {base64: true});
             });
+
             zip.generateAsync({type: "blob"}).then(function(content) {
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(content);
-                link.download = "Scouts_Photos.zip";
+                link.download = "BD_Scouts_Photos.zip";
                 link.click();
+
+                downloadZipBtn.innerHTML = '<i class="fas fa-file-zipper"></i> Download ZIP';
+                downloadZipBtn.disabled = false;
+                showToast('ZIP file downloaded!', 'success');
+            }).catch(err => {
+                downloadZipBtn.innerHTML = '<i class="fas fa-file-zipper"></i> Download ZIP';
+                downloadZipBtn.disabled = false;
+                showToast('Failed to create ZIP', 'error');
             });
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Delete' && activeDrag) {
+                removeItem(activeDrag);
+                activeDrag = null;
+            }
         });
     </script>
 </body>
