@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BD Scouts Pro Watermark Studio</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            var(--primary): #008C44; 
+            --primary: #008C44;
+            --primary-hover: #006B33;
+            --bg-gradient: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text-main: #1b5e20;
+            --text-muted: #4caf50;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        header { text-align: center; margin-bottom: 40px; }
+        header h1 { font-size: 2.8rem; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
+        header p { color: #2E7D32; font-size: 1.1rem; font-weight: 600; }
+
+        .dashboard { display: grid; grid-template-columns: 1fr 2fr; gap: 25px; }
+        @media (max-width: 800px) { .dashboard { grid-template-columns: 1fr; } }
+
+        .card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 140, 68, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .card h3 { font-size: 1.3rem; margin-bottom: 20px; color: var(--primary); }
+
+        .template-preview {
+            width: 100%; aspect-ratio: 1/1;
+            border: 2px dashed #81c784; border-radius: 15px;
+            display: flex; align-items: center; justify-content: center;
+            background: #f1f8e9; margin-bottom: 15px;
+        }
+        .template-preview img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+        .custom-btn {
+            background: white; border: 2px solid var(--primary); color: var(--primary);
+            padding: 10px 20px; border-radius: 10px; cursor: pointer;
+            font-weight: 600; width: 100%; text-align: center; display: inline-block;
+        }
+        .custom-btn:hover { background: var(--primary); color: white; }
+
+        .upload-area {
+            border: 3px dashed #81c784; border-radius: 20px;
+            padding: 40px 20px; text-align: center; cursor: pointer;
+            background: rgba(255,255,255,0.6); margin-bottom: 20px;
+        }
+
+        /* Interactive Crop Gallery */
+        .gallery {
+            display: flex; flex-wrap: wrap; gap: 15px;
+            max-height: 350px; overflow-y: auto; padding-right: 5px;
+        }
+
+        .crop-container {
+            width: 140px; height: 140px;
+            position: relative; overflow: hidden;
+            border-radius: 12px; border: 3px solid #a5d6a7;
+            cursor: grab; background: #ddd;
+            touch-action: none; /* Prevents page scroll on mobile swipe */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .crop-container:active { cursor: grabbing; border-color: var(--primary); }
+        
+        .crop-img {
+            position: absolute; transform-origin: top left;
+            pointer-events: none; /* Let container catch the mouse events */
+        }
+
+        .crop-hint {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            background: rgba(0, 140, 68, 0.8); color: white;
+            font-size: 0.7rem; text-align: center; padding: 4px 0;
+            pointer-events: none; font-weight: 600;
+        }
+
+        /* Progress Bar & Actions */
+        .progress-container { display: none; margin-top: 20px; }
+        .progress-bar { width: 100%; height: 12px; background: #c8e6c9; border-radius: 10px; overflow: hidden; margin-bottom: 10px; }
+        .progress-fill { height: 100%; width: 0%; background: var(--primary); transition: width 0.3s ease; }
+        .progress-text { font-size: 0.9rem; font-weight: 600; }
+
+        .action-group {
+            display: flex; justify-content: flex-end; gap: 15px;
+            margin-top: 20px; border-top: 1px solid #c8e6c9; padding-top: 20px;
+        }
+        .primary-btn {
+            background: var(--primary); color: white; border: none;
+            padding: 12px 30px; font-size: 1rem; border-radius: 12px;
+            cursor: pointer; font-weight: 600;
+        }
+        .primary-btn:hover:not(:disabled) { background: var(--primary-hover); transform: translateY(-2px); }
+        .primary-btn:disabled { background: #a5d6a7; cursor: not-allowed; }
+        .zip-btn { display: none; background: #2E7D32; }
+
+        /* Results */
+        .result-section { margin-top: 40px; display: none; }
+        .result-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; }
+        .result-card { background: white; padding: 10px; border-radius: 15px; text-align: center; border: 1px solid #c8e6c9; }
+        .result-card img { width: 100%; aspect-ratio: 1/1; border-radius: 10px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>⚜️ Bangladesh Scouts</h1>
+            <p>Smart Watermark & Manual Frame Adjust Tool</p>
+        </header>
+
+        <div class="dashboard">
+            <div class="card">
+                <h3>🏕️ Scout Template</h3>
+                <div class="template-preview">
+                    <img id="wmPreview" src="watermark.png" onerror="this.src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='">
+                </div>
+                <label class="custom-btn">
+                    Upload Custom Frame
+                    <input type="file" id="wmInput" accept="image/png" style="display: none;">
+                </label>
+                <p style="text-align: center; font-size: 0.8rem; margin-top: 10px; color: #4caf50;">*Transparent PNG (1:1 ratio).</p>
+            </div>
+
+            <div class="card">
+                <h3>📁 Upload & Adjust Photos</h3>
+                
+                <div class="upload-area" id="dropArea" onclick="document.getElementById('imageInput').click()">
+                    <div style="font-size: 3rem; margin-bottom: 10px;">📸</div>
+                    <h3 style="color: var(--primary);">Click or Drag Photos Here</h3>
+                    <input type="file" id="imageInput" accept="image/*" multiple style="display: none;">
+                </div>
+
+                <div class="gallery" id="uploadPreview"></div>
+
+                <div class="progress-container" id="progressBox">
+                    <div class="progress-text" id="progressText">Processing 0 / 0</div>
+                    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+                </div>
+
+                <div class="action-group">
+                    <button id="processBtn" class="primary-btn" disabled>Apply Watermark</button>
+                    <button id="downloadZipBtn" class="primary-btn zip-btn">📦 Download All (ZIP)</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="result-section" id="resultSection">
+            <div class="card">
+                <h3>✅ Processed Photos</h3>
+                <div class="result-grid" id="finalGallery"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const wmInput = document.getElementById('wmInput');
+        const wmPreview = document.getElementById('wmPreview');
+        const imageInput = document.getElementById('imageInput');
+        const uploadPreview = document.getElementById('uploadPreview');
+        const processBtn = document.getElementById('processBtn');
+        const downloadZipBtn = document.getElementById('downloadZipBtn');
+        const resultSection = document.getElementById('resultSection');
+        const finalGallery = document.getElementById('finalGallery');
+
+        let cropItems = []; // Stores image data and crop offsets
+        let processedImagesData = [];
+        const frameSize = 140; // UI preview box size
+
+        // Setup Watermark
+        const watermarkImg = new Image();
+        watermarkImg.src = 'watermark.png';
+        const savedWM = localStorage.getItem('scoutWatermark');
+        if (savedWM) { wmPreview.src = savedWM; watermarkImg.src = savedWM; }
+
+        wmInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const dataUrl = event.target.result;
+                wmPreview.src = dataUrl; watermarkImg.src = dataUrl;
+                try { localStorage.setItem('scoutWatermark', dataUrl); } catch (err) {}
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Interactive Drag State Variables
+        let activeDrag = null;
+        let startX, startY, initialOffsetX, initialOffsetY;
+
+        // Global Mouse/Touch events for smooth dragging outside the box
+        const onMove = (e) => {
+            if (!activeDrag) return;
+            e.preventDefault();
+            const clientX = e.type.includes('mouse') ? e.pageX : e.touches[0].pageX;
+            const clientY = e.type.includes('mouse') ? e.pageY : e.touches[0].pageY;
+            
+            const dx = clientX - startX;
+            const dy = clientY - startY;
+            
+            let newX = initialOffsetX + dx;
+            let newY = initialOffsetY + dy;
+            
+            // Clamp (Boundary limits so image doesn't go out of frame)
+            newX = Math.min(0, Math.max(newX, frameSize - activeDrag.renderW));
+            newY = Math.min(0, Math.max(newY, frameSize - activeDrag.renderH));
+            
+            activeDrag.offsetX = newX;
+            activeDrag.offsetY = newY;
+            activeDrag.imgEl.style.left = newX + 'px';
+            activeDrag.imgEl.style.top = newY + 'px';
+        };
+
+        const onEnd = () => { activeDrag = null; };
+
+        window.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onEnd);
+        window.addEventListener('touchmove', onMove, {passive: false});
+        window.addEventListener('touchend', onEnd);
+
+        imageInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+        function handleFiles(files) {
+            const newFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
+            if(newFiles.length === 0) return;
+
+            processBtn.disabled = false;
+            downloadZipBtn.style.display = 'none';
+            resultSection.style.display = 'none';
+
+            newFiles.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        // Calculate sizes to cover the frame
+                        const scale = Math.max(frameSize / img.width, frameSize / img.height);
+                        const renderW = img.width * scale;
+                        const renderH = img.height * scale;
+                        
+                        // Center by default
+                        let currentX = (frameSize - renderW) / 2;
+                        let currentY = (frameSize - renderH) / 2;
+
+                        // Create UI Elements
+                        const container = document.createElement('div');
+                        container.className = 'crop-container';
+                        
+                        const imgEl = document.createElement('img');
+                        imgEl.src = img.src;
+                        imgEl.className = 'crop-img';
+                        imgEl.style.width = renderW + 'px';
+                        imgEl.style.height = renderH + 'px';
+                        imgEl.style.left = currentX + 'px';
+                        imgEl.style.top = currentY + 'px';
+
+                        const hint = document.createElement('div');
+                        hint.className = 'crop-hint';
+                        hint.innerText = "✋ Drag to Adjust";
+
+                        container.appendChild(imgEl);
+                        container.appendChild(hint);
+                        uploadPreview.appendChild(container);
+
+                        // Save data for processing and dragging
+                        const itemData = {
+                            file: file,
+                            origImg: img,
+                            imgEl: imgEl,
+                            scale: scale,
+                            renderW: renderW,
+                            renderH: renderH,
+                            offsetX: currentX,
+                            offsetY: currentY
+                        };
+                        cropItems.push(itemData);
+
+                        // Attach drag trigger to container
+                        const startDrag = (e) => {
+                            activeDrag = itemData;
+                            startX = e.type.includes('mouse') ? e.pageX : e.touches[0].pageX;
+                            startY = e.type.includes('mouse') ? e.pageY : e.touches[0].pageY;
+                            initialOffsetX = itemData.offsetX;
+                            initialOffsetY = itemData.offsetY;
+                        };
+
+                        container.addEventListener('mousedown', startDrag);
+                        container.addEventListener('touchstart', startDrag);
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Processing based on manual adjustment
+        processBtn.addEventListener('click', async () => {
+            if (cropItems.length === 0) return;
+
+            processBtn.disabled = true;
+            document.getElementById('progressBox').style.display = 'block';
+            finalGallery.innerHTML = '';
+            resultSection.style.display = 'block';
+            processedImagesData = [];
+
+            let completed = 0;
+            const total = cropItems.length;
+
+            for (let i = 0; i < total; i++) {
+                const item = cropItems[i];
+                const img = item.origImg;
+                
+                // Set output resolution (Shortest side of original image)
+                const outputSize = Math.min(img.width, img.height);
+                
+                // Calculate original coordinates from preview offsets
+                const sourceX = Math.abs(item.offsetX) / item.scale;
+                const sourceY = Math.abs(item.offsetY) / item.scale;
+
+                const canvas = document.createElement('canvas');
+                canvas.width = outputSize;
+                canvas.height = outputSize;
+                const ctx = canvas.getContext('2d');
+
+                // Draw cropped area
+                ctx.drawImage(img, sourceX, sourceY, outputSize, outputSize, 0, 0, outputSize, outputSize);
+
+                // Draw Watermark
+                if (watermarkImg.src && watermarkImg.complete && watermarkImg.naturalHeight !== 0) {
+                    ctx.drawImage(watermarkImg, 0, 0, outputSize, outputSize);
+                }
+
+                const finalDataUrl = canvas.toDataURL('image/jpeg', 0.95);
+                processedImagesData.push({ name: `scouts_${item.file.name}`, data: finalDataUrl });
+
+                const card = document.createElement('div');
+                card.className = 'result-card';
+                card.innerHTML = `<img src="${finalDataUrl}"><a href="${finalDataUrl}" download="scouts_${item.file.name}" class="custom-btn" style="padding: 5px; font-size: 0.8rem;">⬇ Save</a>`;
+                finalGallery.appendChild(card);
+
+                completed++;
+                document.getElementById('progressFill').style.width = `${(completed / total) * 100}%`;
+                document.getElementById('progressText').innerText = `Processing ${completed} / ${total}`;
+                await new Promise(r => setTimeout(r, 50)); 
+            }
+
+            processBtn.disabled = false;
+            document.getElementById('progressText').innerText = `✅ Success! ${total} photos generated.`;
+            downloadZipBtn.style.display = 'inline-block';
+            resultSection.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // ZIP Download
+        downloadZipBtn.addEventListener('click', () => {
+            const zip = new JSZip();
+            const imgFolder = zip.folder("Scouts_Processed_Photos");
+            processedImagesData.forEach(item => {
+                const base64Data = item.data.split(',')[1];
+                imgFolder.file(item.name, base64Data, {base64: true});
+            });
+            zip.generateAsync({type: "blob"}).then(function(content) {
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(content);
+                link.download = "Scouts_Photos.zip";
+                link.click();
+            });
+        });
+    </script>
+</body>
+</html>
