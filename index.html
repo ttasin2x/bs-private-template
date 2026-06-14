@@ -373,7 +373,7 @@
             color: var(--text-muted);
         }
 
-        /* Gallery - UPDATE: Set to exactly 2 images per row */
+        /* Gallery - FIXED: Strictly 2 images per row on all devices */
         .gallery-header {
             display: flex;
             justify-content: space-between;
@@ -411,16 +411,14 @@
             border-color: #fecaca;
             color: var(--accent-red);
         }
+        
         .gallery {
             display: grid; 
-            grid-template-columns: repeat(2, 1fr); /* 1 line e 2 ta image */
-            gap: 20px;
+            grid-template-columns: repeat(2, 1fr) !important; /* Force 2 columns */
+            gap: 15px;
             max-height: 500px; 
             overflow-y: auto; 
             padding-right: 8px;
-        }
-        @media (max-width: 500px) {
-            .gallery { grid-template-columns: 1fr; } /* Mobile exception for better viewing */
         }
         .gallery::-webkit-scrollbar {
             width: 6px;
@@ -440,6 +438,8 @@
         .crop-wrapper {
             position: relative;
             animation: slideIn 0.4s ease-out;
+            min-width: 0; /* Prevent grid blowout */
+            width: 100%;
         }
         @keyframes slideIn {
             from { opacity: 0; transform: translateY(20px) scale(0.95); }
@@ -718,7 +718,7 @@
             box-shadow: var(--shadow-md);
         }
 
-        /* Results Section - UPDATE: Set to exactly 2 images per row */
+        /* Results Section - FIXED: Strictly 2 images per row on all devices */
         .result-section { 
             margin-top: 40px; 
             display: none;
@@ -726,11 +726,8 @@
         }
         .result-grid { 
             display: grid; 
-            grid-template-columns: repeat(2, 1fr); /* 1 line e 2 ta image */
-            gap: 20px; 
-        }
-        @media (max-width: 500px) {
-            .result-grid { grid-template-columns: 1fr; } /* Mobile exception */
+            grid-template-columns: repeat(2, 1fr) !important; /* Force 2 columns */
+            gap: 15px; 
         }
         .result-card { 
             background: white; 
@@ -741,6 +738,7 @@
             box-shadow: var(--shadow-sm);
             transition: all 0.3s ease;
             animation: slideIn 0.4s ease-out;
+            min-width: 0; /* Prevent grid blowout */
         }
         .result-card:hover {
             transform: translateY(-4px);
